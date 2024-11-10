@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@id/mapsFragment">
+
+    <fragment
+        android:id="@+id/nav_Perfil"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.perfil.PerfilFragment"
+        android:label="Datos Personales"
+        tools:layout="@layout/fragment_perfil" />
+
+    <fragment
+        android:id="@+id/nav_Inmuebles"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.inmuebles.InmuebleshowFragment"
+        android:label="Inmuebles"
+        tools:layout="@layout/fragment_inmuebles" >
+        <action
+            android:id="@+id/action_nav_Inmuebles_to_detalleFragment"
+            app:destination="@id/detalleFragment" />
+        <action
+            android:id="@+id/action_nav_Inmuebles_to_nuevo_Inmueble_Fragment"
+            app:destination="@id/nuevo_Inmueble_Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_Inquilinos"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.inquilinos.InquilinosFragment"
+        android:label="Inquilinos"
+        tools:layout="@layout/fragment_inquilinos" >
+        <action
+            android:id="@+id/action_nav_Inquilinos_to_datosPersonalesFragment"
+            app:destination="@id/datosPersonalesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_Contrato"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.contratos.ContratosFragment"
+        android:label="Contrato"
+        tools:layout="@layout/fragment_contratos" >
+        <action
+            android:id="@+id/action_nav_Contrato_to_contrato_DetalleFragment"
+            app:destination="@id/contrato_DetalleFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/nav_Salir"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.Salir.SalirFragment"
+        android:label="Salir"
+        tools:layout="@layout/fragment_inicio" />
+    <fragment
+        android:id="@+id/nav_Contrasena"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.perfil.CambioContrasenaFragment"
+        android:label="Camnio de Contraseña"
+        tools:layout="@layout/fragment_cambio_contrasena" />
+    <fragment
+        android:id="@+id/mapsFragment"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.inicio.MapsFragment"
+        android:label="Mapa"
+        tools:layout="@layout/fragment_maps" />
+    <activity
+        android:id="@+id/loginActivity"
+        android:name="com.sostmaky.lab3inmobiliariafinal.LoginActivity"
+        android:label="activity_login"
+        tools:layout="@layout/activity_login" />
+    <fragment
+        android:id="@+id/detalleFragment"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.inmuebles.DetalleFragment"
+        android:label="Detalle del Inmueble"
+        tools:layout="@layout/fragment_detalle" >
+        <action
+            android:id="@+id/action_detalleFragment"
+            app:destination="@id/nav_Inmuebles" />
+    </fragment>
+    <fragment
+        android:id="@+id/nuevo_Inmueble_Fragment"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.inmuebles.NuevoInmuebleFragment"
+    android:label="Nuevo Inmueble"
+    tools:layout="@layout/fragment_nuevo_inmueble" >
+        <action
+            android:id="@+id/action_nuevo_Inmueble_Fragment_to_nav_Inmuebles"
+            app:destination="@id/nav_Inmuebles" />
+    </fragment>
+    <fragment
+        android:id="@+id/datosPersonalesFragment"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.inquilinos.DatosPersonalesFragment"
+        android:label="Datos del Inquilino"
+        tools:layout="@layout/fragment_datos_personales" >
+        <action
+            android:id="@+id/action_datosPersonalesFragment_to_nav_Inquilinos"
+            app:destination="@id/nav_Inquilinos" />
+    </fragment>
+    <fragment
+        android:id="@+id/contrato_DetalleFragment"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.contratos.Contrato_DetalleFragment"
+        android:label="Detalle del Contrato"
+        tools:layout="@layout/fragment_contrato__detalle" >
+        <action
+            android:id="@+id/action_contrato_DetalleFragment_to_nav_Contrato"
+            app:destination="@id/nav_Contrato" />
+        <action
+            android:id="@+id/action_contrato_DetalleFragment_to_pagosFragment"
+            app:destination="@id/pagosFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/pagosFragment"
+        android:name="com.sostmaky.lab3inmobiliariafinal.ui.contratos.PagosFragment"
+        android:label="Detalle de pagos"
+        tools:layout="@layout/fragment_pagos" >
+        <action
+            android:id="@+id/action_pagosFragment_to_contrato_DetalleFragment"
+            app:destination="@id/contrato_DetalleFragment" />
+    </fragment>
+
+</navigation>
