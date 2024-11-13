@@ -3,6 +3,8 @@ package com.sostmaky.lab3inmobiliariafinal.ui.inicio;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProvider;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -16,9 +18,28 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.sostmaky.lab3inmobiliariafinal.Modelo.DireInmobi;
 import com.sostmaky.lab3inmobiliariafinal.R;
+import com.sostmaky.lab3inmobiliariafinal.databinding.FragmentMapsBinding;
+
+import java.util.List;
 
 public class MapsFragment extends Fragment {
+    private FragmentMapsBinding binding;
+    private MapsViewModel mapsViewModel;
+
+
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+        mapsViewModel = new ViewModelProvider(this).get(MapsViewModel.class);
+        binding = FragmentMapsBinding.inflate(inflater, container, false);
+        View root = binding.getRoot();
+        mapsViewModel.Lugar();
+        return root;
+
+    }
 
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
@@ -35,29 +56,30 @@ public class MapsFragment extends Fragment {
         public void onMapReady(GoogleMap googleMap) {
             googleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-            LatLng SanLuis = new LatLng(-33.302051, -66.336932);
-            googleMap.addMarker(new MarkerOptions().position(SanLuis).title("San Luis"));
-            // donde el zoom inicial y posicion
-            CameraUpdate zoomCam = CameraUpdateFactory.newLatLngZoom(SanLuis, 10); // zoom inicial mas lejano
-            googleMap.moveCamera(zoomCam);
-            // hace una animacion de zoom
-            googleMap.animateCamera(CameraUpdateFactory.zoomTo(18), 5000, null); //
+            mapsViewModel.getDirInmo().observe(getViewLifecycleOwner(), new Observer<List<DireInmobi>>() {
+                @Override
+                public void onChanged(List<DireInmobi> direInmobis) {
+                    DireInmobi central = direInmobis.get(0);
+                    LatLng paraZoom = new LatLng(central.getLatitud(), central.getLongitud());
+
+                    for (DireInmobi dire : direInmobis) {
+                        LatLng inmobiliarias = new LatLng(dire.getLatitud(), dire.getLongitud());
+                        googleMap.addMarker(new MarkerOptions().position(inmobiliarias).title(dire.getNombre()));
+                    }
+                        // donde el zoom inicial y posicion
+                        CameraUpdate zoomCam = CameraUpdateFactory.newLatLngZoom(paraZoom, 10); // zoom inicial mas lejano
+                        googleMap.moveCamera(zoomCam);
+                        // hace una animacion de zoom
+                        googleMap.animateCamera(CameraUpdateFactory.zoomTo(18), 5000, null);
 
 
-            /*LatLng sydney = new LatLng(-34, 151);
-            googleMap.addMarker(new MarkerOptions().position(sydney).title("San Luis"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));*/
+                }
+            });
+
+
         }
     };
 
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             @Nullable ViewGroup container,
-                             @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_maps, container, false);
-
-    }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
@@ -68,4 +90,5 @@ public class MapsFragment extends Fragment {
             mapFragment.getMapAsync(callback);
         }
     }
+
 }

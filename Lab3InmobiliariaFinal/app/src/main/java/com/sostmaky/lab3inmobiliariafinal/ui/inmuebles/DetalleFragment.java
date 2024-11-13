@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
@@ -24,6 +25,7 @@ public class DetalleFragment extends Fragment {
     private FragmentDetalleBinding binding;
     private InmueblesViewModel viewModel;
     private static final int REQUEST_READ_EXTERNAL_STORAGE = 100;
+    private DetalleViewModel detalleViewModel;
 
 
     @SuppressLint("MissingInflatedId")
@@ -33,10 +35,13 @@ public class DetalleFragment extends Fragment {
         binding=FragmentDetalleBinding.inflate(inflater,container,false);
         View root=binding.getRoot();
         viewModel = new ViewModelProvider(this).get(InmueblesViewModel.class);
+        detalleViewModel=new ViewModelProvider(this).get(DetalleViewModel.class);
+        Inmueble inmueble = (Inmueble) getArguments().getSerializable("informacion");
+        detalleViewModel.cargaDetalle(inmueble);
 
-        // Recibir el objeto Inmueble
-        if (getArguments() != null) {
-            Inmueble inmueble = (Inmueble) getArguments().getSerializable("informacion");
+        detalleViewModel.getInmueblDeta().observe(getViewLifecycleOwner(), new Observer<Inmueble>() {
+            @Override
+            public void onChanged(Inmueble inmueble) {
 
             if (inmueble != null) {
                 String foto = inmueble.getFoto();
@@ -70,7 +75,9 @@ public class DetalleFragment extends Fragment {
                     viewModel.actualizaInmuebleEstado(inmueble);
                 });
             }
-        }
+            }
+        });
+
         return root;
     }
     private void cargarImagen(String fotoUri) {
