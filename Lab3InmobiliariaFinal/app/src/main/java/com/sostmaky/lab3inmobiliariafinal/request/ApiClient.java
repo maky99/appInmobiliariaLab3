@@ -33,8 +33,8 @@ import retrofit2.http.Path;
 public class ApiClient {
 
    //public static final  String URLBASE="http://192.168.0.16:5027/api/";
-   //public static final  String URLBASE="http://192.168.1.106:5027/api/";
-  public static final  String URLBASE="http://10.31.240.44:5027/api/";
+   public static final  String URLBASE="http://192.168.1.106:5027/api/";
+  //public static final  String URLBASE="http://10.31.240.44:5027/api/";
     //public static final  String URLBASE="http://192.168.0.18:5027/api/";
 
 
@@ -98,12 +98,12 @@ public class ApiClient {
         @Multipart
         @POST("inmueble/nuevoInmueble")
         Call<Inmueble> NuevoInmueble(
-                @Header("Authorization") String token,
+                @Header("Authorization") String bearerToken,
                 @Part("direccion") RequestBody direccion,
                 @Part("uso") RequestBody uso,
                 @Part("ambientes") RequestBody ambientes,
                 @Part("tamano") RequestBody tamano,
-                @Part("id_Tipo_Inmueble") RequestBody tipo,
+                @Part("tipo") RequestBody tipo,
                 @Part("servicios") RequestBody servicios,
                 @Part("bano") RequestBody bano,
                 @Part("cochera") RequestBody cochera,

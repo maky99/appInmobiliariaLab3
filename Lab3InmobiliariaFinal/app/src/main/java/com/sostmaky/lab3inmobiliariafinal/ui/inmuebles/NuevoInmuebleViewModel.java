@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
+import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.widget.Toast;
@@ -68,7 +69,6 @@ public class NuevoInmuebleViewModel extends AndroidViewModel {
         }
     }
 
-
     public void cargarInmuebleNuevo(String foto, String direccion, String uso, double precio, int tipo, int ambientes, double tamano, int bano, int cochera, String servicios, int patio, boolean disponible, String condicion) {
         Log.d("cargarInmuebleNuevo", "direccion: " + direccion);
         Log.d("cargarInmuebleNuevo", "uso: " + uso);
@@ -83,38 +83,36 @@ public class NuevoInmuebleViewModel extends AndroidViewModel {
         Log.d("cargarInmuebleNuevo", "condicion: " + condicion);
         Log.d("cargarInmuebleNuevo", "estado: " + disponible);
 
-
         int estado = disponible ? 1 : 0;
 
-        // Crea los RequestBody con tipo MIME text/plain
-        RequestBody direccionPart = RequestBody.create(MediaType.parse("text/plain"), direccion);
-        RequestBody usoPart = RequestBody.create(MediaType.parse("text/plain"), uso);
-        RequestBody ambientesPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(ambientes));
-        RequestBody tamanoPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(tamano));
-        RequestBody id_Tipo_InmueblePart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(tipo));
-        RequestBody serviciosPart = RequestBody.create(MediaType.parse("text/plain"), servicios);
-        RequestBody banoPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(bano));
-        RequestBody cocheraPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(cochera));
-        RequestBody patioPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(patio));
-        RequestBody precioPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(precio));
-        RequestBody condicionPart = RequestBody.create(MediaType.parse("text/plain"), condicion);
-        RequestBody estadoPart = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(estado));
+        // Creación de RequestBody para cada campo
+        RequestBody Direccion = RequestBody.create(MediaType.parse("text/plain"), direccion);
+        RequestBody Uso = RequestBody.create(MediaType.parse("text/plain"), uso);
+        RequestBody Ambientes = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(ambientes));
+        RequestBody Tamano = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(tamano));
+        RequestBody Id_Tipo_Inmueble = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(tipo));
+        RequestBody Servicios = RequestBody.create(MediaType.parse("text/plain"), servicios);
+        RequestBody Bano = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(bano));
+        RequestBody Cochera = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(cochera));
+        RequestBody Patio = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(patio));
+        RequestBody Precio = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(precio));
+        RequestBody Condicion = RequestBody.create(MediaType.parse("text/plain"), condicion);
+        RequestBody Estado_inmueble = RequestBody.create(MediaType.parse("text/plain"), String.valueOf(estado));
 
-        // Convierte la foto a MultipartBody.Part si es necesario
+        // Manejo de la imagen como MultipartBody.Part
         MultipartBody.Part archivoFotoPart = null;
         if (foto != null && !foto.isEmpty()) {
-            Uri fotoUri = Uri.parse(foto); // Asume que "foto" es una URI
-            File file = getFileFromUri(fotoUri); // Obtiene el archivo desde la URI
+            Uri fotoUri = Uri.parse(foto);
+            File savedFile = saveImageToAppFolder(fotoUri);
 
-            if (file != null && file.exists()) {
+            if (savedFile != null && savedFile.exists()) {
                 String mimeType = context.getContentResolver().getType(fotoUri);
-                RequestBody requestBody = RequestBody.create(MediaType.parse(mimeType != null ? mimeType : "image/jpeg"), file);
-                archivoFotoPart = MultipartBody.Part.createFormData("archivoFoto", file.getName(), requestBody);
+                RequestBody requestBody = RequestBody.create(MediaType.parse(mimeType != null ? mimeType : "image/*"), savedFile);
+                archivoFotoPart = MultipartBody.Part.createFormData("archivoFoto", savedFile.getName(), requestBody);
 
-                // Log para confirmar el nombre y tipo MIME del archivo
-                Log.d("cargarInmuebleNuevo", "archivoFoto: " + file.getName() + ", mimeType: " + mimeType);
+                Log.d("cargarInmuebleNuevo", "archivoFoto: " + savedFile.getName() + ", mimeType: " + mimeType);
             } else {
-                Log.d("API Error", "No se puede acceder al archivo de la imagen.");
+                Log.d("API Error", "No se pudo guardar o acceder al archivo de la imagen.");
             }
         } else {
             Log.d("cargarInmuebleNuevo", "No se proporcionó ninguna foto.");
@@ -126,9 +124,7 @@ public class NuevoInmuebleViewModel extends AndroidViewModel {
             String bearerToken = "Bearer " + token;
 
             ApiClient.Inmobiliariaservice api = ApiClient.getapiInmobiliaria();
-
-            // Llamada asíncrona a la API
-            Call<Inmueble> llamada = api.NuevoInmueble(bearerToken, direccionPart, usoPart, ambientesPart, tamanoPart, id_Tipo_InmueblePart, serviciosPart, banoPart, cocheraPart, patioPart, precioPart, condicionPart, estadoPart, archivoFotoPart);
+            Call<Inmueble> llamada = api.NuevoInmueble(bearerToken, Direccion, Uso, Ambientes, Tamano, Id_Tipo_Inmueble, Servicios, Bano, Cochera, Patio, Precio, Condicion, Estado_inmueble, archivoFotoPart);
 
             llamada.enqueue(new Callback<Inmueble>() {
                 @Override
@@ -151,30 +147,36 @@ public class NuevoInmuebleViewModel extends AndroidViewModel {
             });
 
         } catch (Exception e) {
-            Log.d("API Exception", "Error durante la llamada a la API: " + e.getMessage() + e.toString());
+            Log.d("API Exception", "Error durante la llamada a la API: " + e.getMessage());
         }
     }
 
-
-    public File getFileFromUri(Uri uri) {
-        File tempFile = null;
-        try {
-            InputStream inputStream = context.getContentResolver().openInputStream(uri);
-            if (inputStream != null) {
-                tempFile = new File(context.getCacheDir(), "temp_image.jpg");
-                OutputStream outputStream = new FileOutputStream(tempFile);
-                byte[] buffer = new byte[1024];
-                int length;
-                while ((length = inputStream.read(buffer)) > 0) {
-                    outputStream.write(buffer, 0, length);
-                }
-                outputStream.close();
-                inputStream.close();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    private File saveImageToAppFolder(Uri imageUri) {
+        // Carpeta dentro del almacenamiento interno de la app
+        File directory = new File(context.getFilesDir(), "InmueblesFotos");
+        if (!directory.exists()) {
+            directory.mkdir(); // Crea la carpeta si no existe
         }
-        return tempFile;
+
+        String fileName = System.currentTimeMillis() + ".jpg"; // Nombre único para la imagen
+        File file = new File(directory, fileName);
+
+        try {
+            InputStream inputStream = context.getContentResolver().openInputStream(imageUri);
+            OutputStream outputStream = new FileOutputStream(file);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = inputStream.read(buffer)) > 0) {
+                outputStream.write(buffer, 0, length);
+            }
+            inputStream.close();
+            outputStream.close();
+        } catch (Exception e) {
+            Log.e("FileSave", "Error al guardar la imagen", e);
+            return null;
+        }
+
+        return file;
     }
 
 
