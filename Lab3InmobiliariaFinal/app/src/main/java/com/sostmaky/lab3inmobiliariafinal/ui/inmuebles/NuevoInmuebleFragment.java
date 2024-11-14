@@ -39,23 +39,26 @@ public class NuevoInmuebleFragment extends Fragment {
     private FragmentNuevoInmuebleBinding binding;
     private Intent intent;
     private ActivityResultLauncher<Intent> arl;
+    private static final int REQUEST_CODE = 101;
 
-    private InmueblesViewModel viewModel;
-
-    public static NuevoInmuebleFragment newInstance() {
-        return new NuevoInmuebleFragment();
-    }
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
+
         InmueblesViewModel viewModel =
                 new ViewModelProvider(this).get(InmueblesViewModel.class);
         mViewModel=new ViewModelProvider(this).get(NuevoInmuebleViewModel.class);
         binding = FragmentNuevoInmuebleBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
 
-        abrirGaleria();
+
+        if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+        } else {
+            abrirGaleria(); // Llama a abrirGaleria() directamente si el permiso ya fue concedido
+        }
+
 
         viewModel.tipoInmuebleList();
 
@@ -86,11 +89,12 @@ public class NuevoInmuebleFragment extends Fragment {
                 int patio = Integer.parseInt(binding.etPatio.getText().toString());
                 boolean disponible = binding.swDisponible.isChecked();
                 String condicion=binding.spCondicion.getSelectedItem().toString();
-                viewModel.cargarInmuebleNuevo(foto, direccion, uso, precio, tipo, ambientes, tamano, bano, cochera,servicios, patio, disponible, condicion);
+                //viewModel.cargarInmuebleNuevo(direccion,uso);
+                mViewModel.cargarInmuebleNuevo(foto, direccion, uso, precio, tipo, ambientes, tamano, bano, cochera,servicios, patio, disponible, condicion);
             }
         });
 
-        viewModel.getVista().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
+        mViewModel.getVista().observe(getViewLifecycleOwner(), new Observer<Boolean>() {
             @Override
             public void onChanged(Boolean aBoolean) {
                 if (aBoolean != null && aBoolean) {
@@ -102,12 +106,15 @@ public class NuevoInmuebleFragment extends Fragment {
 
 
 
-     binding.btnCargImag.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            arl.launch(intent);
-        }
-    });
+        binding.btnCargImag.setOnClickListener(view -> {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                arl.launch(intent);
+            } else {
+                ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, REQUEST_CODE);
+            }
+        });
+
+
         //observer para ver la foto seleccionada
         mViewModel.getUriMutable().observe(getViewLifecycleOwner(), new Observer<Uri>() {
             @Override
@@ -136,11 +143,28 @@ public class NuevoInmuebleFragment extends Fragment {
     }
 
 
+
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         mViewModel = new ViewModelProvider(this).get(NuevoInmuebleViewModel.class);
         // TODO: Use the ViewModel
     }
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        if (requestCode == REQUEST_CODE) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                abrirGaleria();
+            } else {
+                Log.d("Permiso", "Permiso denegado para leer el almacenamiento");
+            }
+        }
+    }
+
+
+
+
+
+
 
 }

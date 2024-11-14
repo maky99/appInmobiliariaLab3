@@ -10,7 +10,7 @@
         <domain includeSubdomains="true">10.31.235.29</domain>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="true">10.31.240.54</domain>
+        <domain includeSubdomains="true">10.31.240.44</domain>
     </domain-config>
     <domain-config cleartextTrafficPermitted="true">
         <domain includeSubdomains="true">192.168.0.16</domain>

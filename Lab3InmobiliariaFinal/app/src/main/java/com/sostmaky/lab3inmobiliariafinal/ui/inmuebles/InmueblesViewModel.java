@@ -4,6 +4,9 @@ import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.TimeFormatException;
 import android.widget.Toast;
@@ -23,8 +26,12 @@ import com.sostmaky.lab3inmobiliariafinal.Modelo.TipoInmueble;
 import com.sostmaky.lab3inmobiliariafinal.R;
 import com.sostmaky.lab3inmobiliariafinal.request.ApiClient;
 
+import java.io.File;
 import java.util.List;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -33,18 +40,16 @@ public class InmueblesViewModel extends AndroidViewModel {
     private Context context;
     private MutableLiveData<List<Inmueble>> mPropiedades;
     private MutableLiveData<List<TipoInmueble>> mTipoInmueble;
-    private MutableLiveData<Boolean>mVista;
+
 
     public InmueblesViewModel(@NonNull Application application) {
         super(application);
         context=application.getApplicationContext();
         mTipoInmueble = new MutableLiveData<>();
-        mVista=new MutableLiveData<>();
+
     }
 
-  public LiveData<Boolean> getVista(){
-        return mVista;
-  }
+
 
     public LiveData<List<Inmueble>> getPropiedades() {
         if (mPropiedades==null){
@@ -138,7 +143,7 @@ public class InmueblesViewModel extends AndroidViewModel {
         });
     }
 
-    public void cargarInmuebleNuevo( String foto,String direccion,String uso,double precio, int tipo, int ambientes,double tamano,int bano,int cochera,String servicios,int patio, boolean disponible,String condicion ){
+   /* public void cargarInmueblNuevo( String foto,String direccion,String uso,double precio, int tipo, int ambientes,double tamano,int bano,int cochera,String servicios,int patio, boolean disponible,String condicion ){
         Log.d("estre", direccion);
         int estado=disponible ? 1: 0;
         Inmueble inmueble=new Inmueble(direccion,uso, ambientes,tamano, tipo,servicios, bano,cochera,patio,precio,condicion,foto,estado);
@@ -162,7 +167,53 @@ public class InmueblesViewModel extends AndroidViewModel {
 
             }
         });
-    }
+
+
+    }*/
+
+
+    /*
+    public void cargarInmuebleNuevo(String direccion, String uso) {
+        Log.d("estre", direccion);
+
+        // Crea el RequestBody solo para la dirección
+        RequestBody Direccion = RequestBody.create(MediaType.parse("text/plain"), direccion);
+        RequestBody Uso = RequestBody.create(MediaType.parse("text/plain"), uso);
+
+        // Obtiene el token de SharedPreferences
+        SharedPreferences sp = context.getSharedPreferences("token.xlm", 0);
+        String token = sp.getString("sp_token", null);
+        String bearerToken = "Bearer " + token;
+
+        // Obtiene la instancia de la API
+        ApiClient.Inmobiliariaservice api = ApiClient.getapiInmobiliaria();
+
+        // Crea la llamada a la API solo con el parámetro de dirección
+        Call<Inmueble> llamada = api.crearInmueble(bearerToken, Direccion);
+
+        Log.d("llamo", "Llamando a la API para crear un inmueble");
+
+        // Realiza la llamada a la API de manera asíncrona
+        llamada.enqueue(new Callback<Inmueble>() {
+            @Override
+            public void onResponse(Call<Inmueble> call, Response<Inmueble> response) {
+                Log.d("respuesta", response.toString());
+                Toast.makeText(context, "Inmueble creado correctamente", Toast.LENGTH_SHORT).show();
+                mVista.setValue(true);
+            }
+
+            @Override
+            public void onFailure(Call<Inmueble> call, Throwable throwable) {
+                Toast.makeText(context, "Error al crear inmueble", Toast.LENGTH_SHORT).show();
+            }
+        });
+    }*/
+
+
+
+
+
+
 
 
 

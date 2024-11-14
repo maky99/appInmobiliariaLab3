@@ -32,16 +32,14 @@ public class PerfilFragment extends Fragment {
     private ActivityResultLauncher<Intent> arl;
 
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        viewModel= new ViewModelProvider(this).get(PerfilViewModel.class);
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        viewModel = new ViewModelProvider(this).get(PerfilViewModel.class);
         binding = FragmentPerfilBinding.inflate(inflater, container, false);
         View root = binding.getRoot();
         abrirGaleria();
 
 
         viewModel.datosPersonales();
-
 
 
         viewModel.getPropietario().observe(getViewLifecycleOwner(), new Observer<Propietario>() {
@@ -63,7 +61,7 @@ public class PerfilFragment extends Fragment {
                     binding.ivFoto.setImageResource(R.drawable.imagen); // Imagen predeterminada si no hay URL
                 }*/
 
-               if (propietario.getFoto() != null ){
+                if (propietario.getFoto() != null) {
                     binding.ivFoto.setImageURI(Uri.parse(propietario.getFoto()));
                 }
             }
@@ -79,10 +77,10 @@ public class PerfilFragment extends Fragment {
                 String direccion = binding.etDireccion.getText().toString();
                 String telefono = binding.etTelefono.getText().toString();
                 String correo = binding.etMail.getText().toString();
-                String foto=binding.ivFoto.toString();
+                String foto = binding.ivFoto.toString();
 
                 // Llamar al método del ViewModel pasando todos los datos editados
-                viewModel.editarDatos(dni, apellido, nombre, direccion, telefono, correo,foto);
+                viewModel.editarDatos(dni, apellido, nombre, direccion, telefono, correo, foto);
             }
         });
         binding.btnFoto.setOnClickListener(new View.OnClickListener() {
@@ -103,15 +101,13 @@ public class PerfilFragment extends Fragment {
         });
 
 
-
-
-
         return root;
     }
+
     //para abrir la galeria
-    private void abrirGaleria(){
-        intent=new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-        arl=registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+    private void abrirGaleria() {
+        intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        arl = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
             @Override
             public void onActivityResult(ActivityResult result) {
                 viewModel.recibirFoto(result);
@@ -126,7 +122,6 @@ public class PerfilFragment extends Fragment {
         super.onDestroyView();
         binding = null;
     }
-
 
 
 }
