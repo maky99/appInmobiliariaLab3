@@ -32,8 +32,10 @@ import retrofit2.http.Path;
 
 public class ApiClient {
 
+    public  static  final String ima="http://192.168.1.106:5027/imagenes/";
    //public static final  String URLBASE="http://192.168.0.16:5027/api/";
    public static final  String URLBASE="http://192.168.1.106:5027/api/";
+
   //public static final  String URLBASE="http://10.31.240.44:5027/api/";
     //public static final  String URLBASE="http://192.168.0.18:5027/api/";
 
@@ -103,7 +105,7 @@ public class ApiClient {
                 @Part("uso") RequestBody uso,
                 @Part("ambientes") RequestBody ambientes,
                 @Part("tamano") RequestBody tamano,
-                @Part("tipo") RequestBody tipo,
+                @Part("Id_Tipo_Inmueble") RequestBody Id_Tipo_Inmueble,
                 @Part("servicios") RequestBody servicios,
                 @Part("bano") RequestBody bano,
                 @Part("cochera") RequestBody cochera,
@@ -111,7 +113,7 @@ public class ApiClient {
                 @Part("precio") RequestBody precio,
                 @Part("condicion") RequestBody condicion,
                 @Part("estado_Inmueble") RequestBody estado,
-                @Part MultipartBody.Part archivoFoto
+                @Part MultipartBody.Part foto
         );
 
 

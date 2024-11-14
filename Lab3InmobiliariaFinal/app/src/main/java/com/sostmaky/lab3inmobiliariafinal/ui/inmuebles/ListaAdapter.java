@@ -21,6 +21,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.sostmaky.lab3inmobiliariafinal.Modelo.Inmueble;
 import com.sostmaky.lab3inmobiliariafinal.R;
+import com.sostmaky.lab3inmobiliariafinal.request.ApiClient;
+
 
 import java.util.List;
 
@@ -50,7 +52,7 @@ public class ListaAdapter extends RecyclerView.Adapter<ListaAdapter.Viewolder> {
         Inmueble inmueble = inmuebles.get(position);
         holder.direccion.setText(inmuebles.get(position).getDireccion());
         holder.precio.setText(inmuebles.get(position).getPrecio()+"");
-        String fotoUri = inmueble.getFoto();
+        String fotoUri = ApiClient.ima + inmueble.getFoto();
         if (fotoUri != null && !fotoUri.isEmpty()) {
             // Cargar la imagen usando Glide
             Glide.with(holder.itemView.getContext())

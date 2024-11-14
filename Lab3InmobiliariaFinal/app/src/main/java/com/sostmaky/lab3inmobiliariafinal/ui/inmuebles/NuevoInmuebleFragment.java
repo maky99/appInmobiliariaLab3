@@ -36,6 +36,8 @@ public class NuevoInmuebleFragment extends Fragment {
     private FragmentNuevoInmuebleBinding binding;
     private Intent intent;
     private ActivityResultLauncher<Intent> arl;
+    private static final int PICK_IMAGE = 100;
+    Uri imageUri;
     private static final int REQUEST_CODE = 1;
 
     @Override
@@ -66,7 +68,7 @@ public class NuevoInmuebleFragment extends Fragment {
 
         // Lógica del botón Aceptar
         binding.btnAceptar.setOnClickListener(view -> {
-            String foto = mViewModel.getUriMutable().getValue() != null ? mViewModel.getUriMutable().getValue().toString() : "";
+            //String foto = mViewModel.getUriMutable().getValue() != null ? mViewModel.getUriMutable().getValue().toString() : "";
             String direccion = binding.etDireccion.getText().toString();
             String uso = binding.spUso.getSelectedItem().toString();
             double precio = Double.parseDouble(binding.etPrecio.getText().toString());
@@ -80,7 +82,7 @@ public class NuevoInmuebleFragment extends Fragment {
             int patio = Integer.parseInt(binding.etPatio.getText().toString());
             boolean disponible = binding.swDisponible.isChecked();
             String condicion = binding.spCondicion.getSelectedItem().toString();
-            mViewModel.cargarInmuebleNuevo(foto, direccion, uso, precio, tipo, ambientes, tamano, bano, cochera, servicios, patio, disponible, condicion);
+            mViewModel.cargarInmuebleNuevo(binding.ivFoto, direccion, uso, precio, tipo, ambientes, tamano, bano, cochera, servicios, patio, disponible, condicion);
         });
 
         // Redirección al navegar

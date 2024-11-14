@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide;
 import com.sostmaky.lab3inmobiliariafinal.Modelo.Inmueble;
 import com.sostmaky.lab3inmobiliariafinal.R;
 import com.sostmaky.lab3inmobiliariafinal.databinding.FragmentDetalleBinding;
+import com.sostmaky.lab3inmobiliariafinal.request.ApiClient;
 
 public class DetalleFragment extends Fragment {
     private FragmentDetalleBinding binding;
@@ -44,7 +45,7 @@ public class DetalleFragment extends Fragment {
             public void onChanged(Inmueble inmueble) {
 
             if (inmueble != null) {
-                String foto = inmueble.getFoto();
+                String foto = ApiClient.ima + inmueble.getFoto();
                 if (foto != null) {
                     if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_EXTERNAL_STORAGE)
                             != PackageManager.PERMISSION_GRANTED) {
